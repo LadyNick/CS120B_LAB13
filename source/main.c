@@ -42,6 +42,16 @@ void A2D_init() {
 	//	    analog to digital conversions.
 }
 
+enum LED_States{light}LED_State;
+int LED_Tick(int LED_State){
+	switch(LED_State){
+		case light:
+			transmit(ADC);
+			LED_State = light;
+			break;
+		default: LED_State = lights;
+	}
+}
 
 int main(void) {
     
@@ -55,7 +65,7 @@ int main(void) {
     task1.state = start;
     task1.period = 100; 
     task1.elapsedTime = task1.period;
-    task1.TickFct = &LEDS;
+    task1.TickFct = &LED_Tick;
 	
     A2D_init();
 
