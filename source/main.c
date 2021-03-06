@@ -14,7 +14,7 @@
 #include "scheduler.h"
 #endif
 
-unsigned short input = ADC;
+unsigned short input;
 
 
 //im assuming we can just change the data type to short, and the i <8 to i < 10
@@ -31,7 +31,7 @@ void transmit_data(unsigned short data) {
         }
         // set RCLK = 1. 
         PORTD |= 0x04;
-    }
+    
 }
 
 void A2D_init() {
@@ -46,11 +46,12 @@ enum LED_States{light}LED_State;
 int LED_Tick(int LED_State){
 	switch(LED_State){
 		case light:
-			transmit(ADC);
+			transmit_data(ADC);
 			LED_State = light;
 			break;
-		default: LED_State = lights;
+		default: LED_State = light;
 	}
+	return LED_State;
 }
 
 int main(void) {
