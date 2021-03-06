@@ -14,7 +14,7 @@
 #include "scheduler.h"
 #endif
 
-unsigned short input;
+unsigned short input = ADC;
 
 
 //im assuming we can just change the data type to short, and the i <8 to i < 10
@@ -45,11 +45,35 @@ void A2D_init() {
 
 int main(void) {
     
+    static task task1;
+    task *tasks[] = {&task1};
+    const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
 
+    const char start = -1;
+
+    //LEDS
+    task1.state = start;
+    task1.period = 100; 
+    task1.elapsedTime = task1.period;
+    task1.TickFct = &LEDS;
+	
     A2D_init();
 
+    TimerSet(50);
+    TimerOn();
+    unsigned short i;
+    
     while (1) {
-	input = ADC;
+	    input = ADC;
+	    for(i=0; i<numTasks; i++){ //Scheduler code
+			if(tasks[i]->elapsedTime == tasks[i]->period){
+				tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);
+				tasks[i]->elapsedTime = 0;
+			}
+			tasks[i]->elapsedTime += 50;
+		}
+		while(!TimerFlag);
+		TimerFlag = 0;
     }
     return 1;
 }
