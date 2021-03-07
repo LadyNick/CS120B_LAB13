@@ -18,6 +18,7 @@
 unsigned short joystick;
 unsigned char pattern = 0x80;
 unsigned char row = 0xFE;
+unsigned short speed = 1000;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
 void transmit_data(unsigned char data, unsigned char reg) {
@@ -101,6 +102,53 @@ int Shift_Tick(int Shift_State){
 	return Shift_State;
 }
 
+enum Speed_States{stop, range1000, range500, range250, range100ms}Speed_State;
+int Speed_Tick(int Speed_State){
+	//here are the different sectors since i use the norm +- 15 just as an offset meaning for moving left and righ the mins are
+	//504 +- 15 --> 489, 519 
+	//max for right: 1008
+	//max for left: 15
+	//489-15 -> 474 /4 --> 118.5 --> 489-371, 371-253, 253-135, 135 & below 
+	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
+	
+	switch(Speed_State){
+		case stop:
+			if((joystick >= 885) || ((joystick <= 135)){
+				Speed_State = range100;
+			}
+			else if((joystick >= 763) || (joystick <= 253)){
+				Speed_State = range250;	
+			}
+			else if((joystick >= 641) || (joystick <= 371)){
+				Speed_State = range500;
+			}
+			else if((joystick >= 519) || (joystick <= 489)){
+				Speed_State = range1000;
+			}
+			else{
+				speed = 1000;
+				Speed_State = stop;
+			}
+		case range1000:
+			speed = 1000;
+			Speed_State = stop;
+			break;
+		case range500:
+			speed = 500;
+			Speed_State = stop;
+			break;
+		case range250:
+			speed = 250;
+			Speed_State = stop;
+			break;
+		case range100:
+			speed = 100;
+			Speed_State = stop;
+			break;
+	}		
+	return Speed_State;
+}
+
 enum Display_States{matrix}Display_State;
 int Display_Tick(int LED_State){
 	switch(LED_State){
@@ -119,8 +167,8 @@ int main(void) {
     DDRC = 0xFF; PORTC = 0x00;
 
 
-    static task task1, task2;
-    task *tasks[] = {&task1, &task2};
+    static task task1, task2, task3;
+    task *tasks[] = {&task1, &task2, &task3};
     const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
 
     const char start = -1;
@@ -137,6 +185,12 @@ int main(void) {
     task2.elapsedTime = task2.period;
     task2.TickFct = &Display_Tick;
 	
+    //SPEED
+    task3.state = start;
+    task3.period = 10;
+    task3.elapsedTime = task3.period;
+    task3.TickFct = &Speed_Tick;
+	
     A2D_init();
 
     TimerSet(1);
@@ -145,6 +199,8 @@ int main(void) {
     
     while (1) {
 	    joystick = ADC;
+	    task1.period = speed;
+	    
 	    for(i=0; i<numTasks; i++){ //Scheduler code
 			if(tasks[i]->elapsedTime == tasks[i]->period){
 				tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);
