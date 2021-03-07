@@ -69,7 +69,7 @@ int main(void) {
 
     //LEDS
     task1.state = start;
-    task1.period = 100; 
+    task1.period = 50; 
     task1.elapsedTime = task1.period;
     task1.TickFct = &LED_Tick;
 	
