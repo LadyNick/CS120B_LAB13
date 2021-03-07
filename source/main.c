@@ -18,7 +18,7 @@
 unsigned short joystick;
 unsigned char pattern = 0x80;
 unsigned char row = 0xFE;
-unsigned short speed = 1000;
+unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
 void transmit_data(unsigned char data, unsigned char reg) {
@@ -102,7 +102,7 @@ int Shift_Tick(int Shift_State){
 	return Shift_State;
 }
 
-enum Speed_States{stop, range1000, range500, range250, range100ms}Speed_State;
+enum Speed_States{stop, range1000, range500, range250, range100}Speed_State;
 int Speed_Tick(int Speed_State){
 	//here are the different sectors since i use the norm +- 15 just as an offset meaning for moving left and righ the mins are
 	//504 +- 15 --> 489, 519 
@@ -113,7 +113,7 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case stop:
-			if((joystick >= 885) || ((joystick <= 135)){
+			if((joystick >= 885) || (joystick <= 135)){
 				Speed_State = range100;
 			}
 			else if((joystick >= 763) || (joystick <= 253)){
@@ -145,6 +145,7 @@ int Speed_Tick(int Speed_State){
 			speed = 100;
 			Speed_State = stop;
 			break;
+		default: Speed_State = stop; break;
 	}		
 	return Speed_State;
 }
@@ -180,16 +181,16 @@ int main(void) {
     task1.TickFct = &Shift_Tick;
 	
     //DISPLAY
-    task2.state = start;
-    task2.period = 1; 
-    task2.elapsedTime = task2.period;
-    task2.TickFct = &Display_Tick;
+    task3.state = start;
+    task3.period = 1; 
+    task3.elapsedTime = task3.period;
+    task3.TickFct = &Display_Tick;
 	
     //SPEED
-    task3.state = start;
-    task3.period = 10;
-    task3.elapsedTime = task3.period;
-    task3.TickFct = &Speed_Tick;
+    task2.state = start;
+    task2.period = 1;
+    task2.elapsedTime = task2.period;
+    task2.TickFct = &Speed_Tick;
 	
     A2D_init();
 
