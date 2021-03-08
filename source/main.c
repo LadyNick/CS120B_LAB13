@@ -73,10 +73,10 @@ int Shift_Tick(int Shift_State){
 			if(joystick == 0x1F8){
 				Shift_State = wait;
 			}
-			else if(joystick < (0x1F8 - 0x0F)){
+			else if(joystick < (504 - 32)){
 				Shift_State = left;
 			}
-			else if(joystick > (0x1F8 + 0x0F)){
+			else if(joystick > (504 + 32)){
 				Shift_State = right;
 			}
 			break;
@@ -114,7 +114,7 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case range: //519
-			if(joystick >= 504){
+			if(joystick >= 536){
 				if(joystick >= 885){
 					speed = 100;
 				}
@@ -128,7 +128,7 @@ int Speed_Tick(int Speed_State){
 					speed = 1000;
 				}
 			}//489
-			else if(joystick < 504){
+			else if(joystick < 372){
 				if(joystick <= 135){
 					speed = 100;
 				}
