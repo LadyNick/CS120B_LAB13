@@ -102,7 +102,7 @@ int Shift_Tick(int Shift_State){
 	return Shift_State;
 }
 
-enum Speed_States{assignspeed}Speed_State;
+enum Speed_States{stop, range1000, range500, range250, range100}Speed_State;
 int Speed_Tick(int Speed_State){
 	//here are the different sectors since i use the norm +- 15 just as an offset meaning for moving left and righ the mins are
 	//504 +- 15 --> 489, 519 
@@ -112,19 +112,50 @@ int Speed_Tick(int Speed_State){
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
 	switch(Speed_State){
-		case assignspeed:
+		case stop:
 			if(joystick >= 519){
-				speed = 50;
+				speed = 100;
 			}
 			else if(joystick <= 489){
-				speed = 100;
+				speed = 50;
+			}
+			Speed_State = stop;
+			break;
+		/*
+			if((joystick >= 885) || (joystick <= 135)){
+				Speed_State = range100;
+			}
+			else if((joystick >= 763) || (joystick <= 253)){
+				Speed_State = range250;	
+			}
+			else if((joystick >= 641) || (joystick <= 371)){
+				Speed_State = range500;
+			}
+			else if((joystick >= 519) || (joystick <= 489)){
+				Speed_State = range1000;
 			}
 			else{
 				speed = 1000;
+				Speed_State = stop;
 			}
-			Speed_State = assignspeed;
 			break;
-		default: Speed_State = assignspeed; break;
+		case range1000:
+			speed = 1000;
+			Speed_State = stop;
+			break;
+		case range500:
+			speed = 500;
+			Speed_State = stop;
+			break;
+		case range250:
+			speed = 250;
+			Speed_State = stop;
+			break;
+		case range100:
+			speed = 100;
+			Speed_State = stop;
+			break; */
+		default: Speed_State = stop; break;
 	} 		
 	return Speed_State;
 }
