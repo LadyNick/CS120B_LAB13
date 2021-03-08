@@ -18,7 +18,8 @@
 
 unsigned short leftright;
 unsigned short updown;
-unsigned char pattern[5] = {0x80, 0x00, 0x00, 0x00, 0x00};
+unsigned char pattern = 0x80;
+unsigned char currow = 0xFE;
 unsigned char row[5] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF}; 
 unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
@@ -94,50 +95,43 @@ int Shift_Tick(int Shift_State){
 			break;
 		case shift:
 			if(leftright <= 498){//its going to the left
-				for(int i = 0; i < 5; ++i){
-					if(pattern[i] != 0){
-						if(pattern[i] == 0x80){
-							//edge
-						}
-						else{
-							pattern[i] = pattern[i] << 1;
-						}
-					}
+				if(pattern == 0x80){
+					//edge
+				}
+				else{
+					pattern = pattern << 1;
 				}
 			}
 			if(leftright >= 519){//its going to the right
-				for(int i = 0; i < 5; ++i){
-					if(pattern[i] != 0){
-						if(pattern[i] == 0x01){
-							//edge
-						}
-						else{
-							pattern[i] = pattern[i] >> 1;
-						}
-					}
+				if(pattern == 0x01){
+					//edge
+				}
+				else{
+					pattern = pattern >> 1;
 				}
 			}
 			if(updown <= 498){//its going up
-				if(pattern[0] > 0){
+				if(currow == 0xFE){
 					//edge
 				}
 				else{
-					for(int i = 0; i < 4; ++i){
-						pattern[i] = pattern[i+1];
+					for(int i = 0; i < 5; ++i){
+						if(row[i] == currow){
+							currow = row[i-1];
+						}
 					}
-					pattern[4] = 0x00;
 				}
 			}
 			if(updown >= 519){//its going down
-				if(pattern[4] > 0){
+				if(currow == 0xEF){
 					//edge
 				}
 				else{
-					for(int i = 4; i > 0; --i){
-						pattern[i] = pattern[i-1]; 
+					for(int i = 0; i < 5; ++i){
+						if(row[i] == currow){
+							currow = row[i+1];
+						}
 					}
-					pattern[0] = 0x00;
-				}
 			}	
 		default: Shift_State = wait; break;
 	}
@@ -195,8 +189,8 @@ int Display_Tick(int LED_State){
 			
 		case matrix:
 			for(int i = 0; i < 5; ++i){
-				transmit_data(pattern[i],1);
-				transmit_data(row[i], 2);
+				transmit_data(pattern,1);
+				transmit_data(currow, 2);
 			}
 			LED_State = matrix;
 			break;
