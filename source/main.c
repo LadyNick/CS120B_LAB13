@@ -19,7 +19,7 @@
 unsigned char update = 0;
 unsigned short leftright;
 unsigned short updown;
-unsigned char pattern[5] = {0x00, 0x3C, 0x24, 0x3C, 0x00};
+unsigned char pattern[5] = {0x80, 0x00, 0x00, 0x00, 0x00};
 unsigned char row[5] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF}; 
 unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
@@ -95,8 +95,51 @@ int Shift_Tick(int Shift_State){
 			break;
 		case shift:
 			if(leftright <= 498){//its going to the left
-				if(
+				for(int i = 0; i < 5; ++i){
+					if(pattern[i] != 0){
+						if(pattern[i] == 0x80){
+							//edge
+						}
+						else{
+							pattern[i] = pattern[i] << 1;
+						}
+					}
+				}
 			}
+			if(leftright >= 519){//its going to the right
+				for(int i = 0; i < 5; ++i){
+					if(pattern[i] != 0){
+						if(pattern[i] == 0x01){
+							//edge
+						}
+						else{
+							pattern[i] = pattern[i] >> 1;
+						}
+					}
+				}
+			}
+			if(updown <= 498){//its going up
+				if(pattern[0] > 0){
+					//edge
+				}
+				else{
+					for(int i = 0; i < 4; ++i){
+						pattern[i] = pattern[i+1];
+					}
+					pattern[4] = 0x00;
+				}
+			}
+			if(updown >= 519){//its going down
+				if(pattern[4] > 0){
+					//edge
+				}
+				else{
+					for(int i = 4; i > 0; --i){
+						pattern[i] = pattern[i-1]; 
+					}
+					pattern[0] = 0x00;
+				}
+			}	
 		default: Shift_State = wait; break;
 	}
 	return Shift_State;
