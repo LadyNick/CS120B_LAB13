@@ -125,7 +125,7 @@ int Speed_Tick(int Speed_State){
 			else if(joystick >= 519){
 				speed = 1000;
 			}
-			else if(joystick <= 135){
+		/*	else if(joystick <= 135){
 				speed = 100;
 			}
 			else if(joystick <= 253){
@@ -136,8 +136,11 @@ int Speed_Tick(int Speed_State){
 			}
 			else if(joystick <= 489){
 				speed = 1000;
+			}*/
+			else{
+				speed = 1000;
 			}
-			Speed_State = stop;
+			Speed_State = assignspeed;
 			break;
 		default: Speed_State = assignspeed; break;
 	} 		
