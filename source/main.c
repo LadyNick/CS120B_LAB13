@@ -18,7 +18,7 @@
 unsigned short joystick;
 unsigned char pattern = 0x80;
 unsigned char row = 0xFE;
-unsigned long speed = 100;
+unsigned long speed = 1000;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
 void transmit_data(unsigned char data, unsigned char reg) {
@@ -129,6 +129,7 @@ int Speed_Tick(int Speed_State){
 				speed = 1000;
 				Speed_State = stop;
 			}
+			break;
 		case range1000:
 			speed = 1000;
 			Speed_State = stop;
