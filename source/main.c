@@ -113,8 +113,8 @@ int Speed_Tick(int Speed_State){
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
 	switch(Speed_State){
-		case range:
-			if(joystick >= 519){
+		case range: //519
+			if(joystick >= 504){
 				if(joystick >= 885){
 					speed = 100;
 				}
@@ -127,8 +127,8 @@ int Speed_Tick(int Speed_State){
 				else{
 					speed = 1000;
 				}
-			}
-			else if(joystick <= 489){
+			}//489
+			else if(joystick < 504){
 				if(joystick <= 135){
 					speed = 100;
 				}
