@@ -73,10 +73,10 @@ int Shift_Tick(int Shift_State){
 			if(joystick == 0x1F8){
 				Shift_State = wait;
 			}
-			else if(joystick < (504 - 32)){
+			else if(joystick < (504 - 15)){
 				Shift_State = left;
 			}
-			else if(joystick > (504 + 32)){
+			else if(joystick > (504 + 15)){
 				Shift_State = right;
 			}
 			break;
@@ -114,7 +114,7 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case range: //519
-			if(joystick >= 536){
+			if(joystick >= 519){
 				if(joystick >= 885){
 					speed = 100;
 				}
@@ -128,7 +128,7 @@ int Speed_Tick(int Speed_State){
 					speed = 1000;
 				}
 			}//489
-			else if(joystick < 372){
+			else if(joystick < 489){
 				if(joystick <= 135){
 					speed = 100;
 				}
@@ -201,7 +201,7 @@ int main(void) {
 	    task1.period = speed;
 	    
 	    for(i=0; i<numTasks; i++){ //Scheduler code
-			if(tasks[i]->elapsedTime == tasks[i]->period){
+			if(tasks[i]->elapsedTime >= tasks[i]->period){
 				tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);
 				tasks[i]->elapsedTime = 0;
 			}
