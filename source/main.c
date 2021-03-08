@@ -104,7 +104,7 @@ int Shift_Tick(int Shift_State){
 	return Shift_State;
 }
 
-enum Speed_States{range, assign}Speed_State;
+enum Speed_States{range}Speed_State;
 int Speed_Tick(int Speed_State){
 	//here are the different sectors since i use the norm +- 15 just as an offset meaning for moving left and righ the mins are
 	//504 +- 15 --> 489, 519 
@@ -115,47 +115,18 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case range:
-			if(joystick >= 885){
-				tilt = 1;
-			}
-			if(joystick <= 135){
-				tilt = 1;
-			}
-			if((joystick >= 763) && (joystick < 885)){
-				tilt = 2;
-			}
-			if((joystick >= 641) && (joystick < 763)){
-				tilt = 3;
-			}
-			if((joystick >= 519) && (joystick < 641)){
-				tilt = 4;
-			}
-			if((joystick <= 253) && (joystick > 135)){
-				tilt = 2;
-			}
-			if((joystick <= 371) && (joystick > 253)){
-				tilt = 3;
-			}
-			((joystick <= 489) && (joystick > 371)){
-				tilt = 4;
-			}
-			Speed_State = assign;
-			break;
-		case assign:
-			if(tilt == 1){
+			if(joystick >= 519){
+				if(joystick >= 885){
+					speed = 50;
+				}
+				else{	
 				speed = 100;
+				}
 			}
-			if(tilt == 2){
-				speed = 250;
+			if(joystick <= 489){
+				speed = 200;
 			}
-			if(tilt == 3){
-				speed = 500;
-			}
-			if(tilt == 4){
-				speed = 1000;
-			}
-			Speed_State = range;
-			break;
+			Speed_State = range; break;
 		default: Speed_State = range; break;
 	} 		
 	return Speed_State;
