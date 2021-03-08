@@ -141,30 +141,58 @@ int Speed_Tick(int Speed_State){
 	//489-15 -> 474 /4 --> 118.5 --> 489-371, 371-253, 253-135, 135 & below 
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
-	/*switch(Speed_State){
-		case range: //519
-			if(joystick >= 519){
-				if(joystick >= 885){
+	switch(Speed_State){
+		case range: 
+			if(leftright >= 519){
+				if(leftright >= 885){
 					speed = 100;
 				}
-				else if(joystick >= 763){
+				else if(leftright >= 763){
 					speed = 250;
 				}
-				else if(joystick >= 641){
+				else if(leftright >= 641){
 					speed = 500;
 				}
 				else{
 					speed = 1000;
 				}
-			}//489
-			else if(joystick < 489){
-				if(joystick <= 135){
+			}
+			else if(leftright < 489){
+				if(leftright <= 135){
 					speed = 100;
 				}
-				else if(joystick <= 253){
+				else if(leftright <= 253){
 					speed = 250;
 				}
-				else if(joystick <= 371){
+				else if(leftright <= 371){
+					speed = 500;
+				}
+				else{
+					speed = 1000;
+				}
+			}
+			if(updown >= 519){
+				if(updown >= 885){
+					speed = 100;
+				}
+				else if(updown >= 763){
+					speed = 250;
+				}
+				else if(updown >= 641){
+					speed = 500;
+				}
+				else{
+					speed = 1000;
+				}
+			}
+			else if(updown < 489){
+				if(updown <= 135){
+					speed = 100;
+				}
+				else if(updown <= 253){
+					speed = 250;
+				}
+				else if(updown <= 371){
 					speed = 500;
 				}
 				else{
@@ -173,7 +201,7 @@ int Speed_Tick(int Speed_State){
 			}
 			Speed_State = range; break;
 		default: Speed_State = range; break; 
-	} 		*/
+	} 		
 	return Speed_State;
 }
 
@@ -182,18 +210,8 @@ int Display_Tick(int LED_State){
 	switch(LED_State){
 			
 		case matrix:
-//			if(update == currow){
-				transmit_data(row[currow],2);
-				transmit_data(pattern, 1);
-//			}
-//			else{
-//				transmit_data(row[update],2);
-//				transmit_data(0,1);
-//			}
-//			++update;
-//			if(update > 4){
-//				update = 0;
-//			}
+			transmit_data(row[currow],2);
+			transmit_data(pattern, 1);
 			LED_State = matrix;
 			break;
 		default: LED_State = matrix;
