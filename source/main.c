@@ -18,7 +18,7 @@
 unsigned short joystick;
 unsigned char pattern = 0x80;
 unsigned char row = 0xFE;
-unsigned char count = 0;
+unsigned char tilt = 0;
 unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
@@ -114,10 +114,33 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case assignspeed:
-			if(joystick == 504){
-			       count;
+			if(joystick >= 885){
+				speed = 100;
 			}
-					
+			else if(joystick >= 763){
+				speed = 250;
+			}
+			else if(joystick >= 641){
+				speed = 500;
+			}
+			else if(joystick >= 519){
+				speed = 1000;
+			}
+		/*	else if(joystick <= 135){
+				speed = 100;
+			}
+			else if(joystick <= 253){
+				speed = 250;
+			}
+			else if(joystick <= 371){
+				speed = 500;
+			}
+			else if(joystick <= 489){
+				speed = 1000;
+			}*/
+			else{
+				speed = 1000;
+			}
 			Speed_State = assignspeed;
 			break;
 		default: Speed_State = assignspeed; break;
