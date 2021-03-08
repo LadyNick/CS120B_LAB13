@@ -80,6 +80,9 @@ int Shift_Tick(int Shift_State){
 			else if(joystick > (0x1F8 + 0x0F)){
 				Shift_State = right;
 			}
+			else{
+				Shift_State = wait;
+			}
 			break;
 		case left:
 			if(pattern == 0x80){
