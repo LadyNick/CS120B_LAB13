@@ -112,7 +112,7 @@ int Speed_Tick(int Speed_State){
 	//489-15 -> 474 /4 --> 118.5 --> 489-371, 371-253, 253-135, 135 & below 
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
-	switch(Speed_State{
+	switch(Speed_State){
 		case range:
 			if(joystick >= 885){
 				tilt = 1;
