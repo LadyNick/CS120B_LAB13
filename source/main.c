@@ -16,7 +16,6 @@
 #include "scheduler.h"
 #endif
 
-unsigned char update = 0;
 unsigned short leftright;
 unsigned short updown;
 unsigned char pattern[5] = {0x80, 0x00, 0x00, 0x00, 0x00};
@@ -86,7 +85,7 @@ enum Shift_States{wait, shift}Shift_State;
 int Shift_Tick(int Shift_State){
 	switch(Shift_State){
 		case wait:
-			if((leftright > 498) && (lefright < 519) && (updown > 498) && (updown < 519)){
+			if((leftright > 498) && (leftright < 519) && (updown > 498) && (updown < 519)){
 				Shift_State = wait; //there is no movement
 			}
 			else{
@@ -195,9 +194,9 @@ int Display_Tick(int LED_State){
 	switch(LED_State){
 			
 		case matrix:
-			for(update = 0; update < 5; ++i){
-				transmit_data(pattern[update],1);
-				transmit_data(row[update], 2);
+			for(int i = 0; i < 5; ++i){
+				transmit_data(pattern[i],1);
+				transmit_data(row[i], 2);
 			}
 			LED_State = matrix;
 			break;
