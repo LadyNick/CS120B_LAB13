@@ -113,29 +113,11 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case assignspeed:
-			if(joystick >= 885){
+			if(joystick >= 519){
+				speed = 50;
+			}
+			else if(joystick <= 489){
 				speed = 100;
-			}
-			else if(joystick <= 135){
-				speed = 100;
-			}
-			else if((joystick >= 763) && (joystick < 885)){
-				speed = 250;
-			}
-			else if((joystick >= 641) && (joystick < 763)){
-				speed = 500;
-			}
-			else if((joystick >= 519) && (joystick < 641)){
-				speed = 1000;
-			}
-			else if((joystick <= 253) && (joystick > 135)){
-				speed = 250;
-			}
-			else if((joystick <= 371) && (joystick > 253)){
-				speed = 500;
-			}
-			else if((joystick <= 489) && (joystick > 371)){
-				speed = 1000;
 			}
 			else{
 				speed = 1000;
