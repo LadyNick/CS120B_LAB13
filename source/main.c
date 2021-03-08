@@ -18,6 +18,7 @@
 unsigned short joystick;
 unsigned char pattern = 0x80;
 unsigned char row = 0xFE;
+unsigned char tilt = 0;
 unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
@@ -102,7 +103,7 @@ int Shift_Tick(int Shift_State){
 	return Shift_State;
 }
 
-enum Speed_States{stop, range1000, range500, range250, range100}Speed_State;
+enum Speed_States{range, assign}Speed_State;
 int Speed_Tick(int Speed_State){
 	//here are the different sectors since i use the norm +- 15 just as an offset meaning for moving left and righ the mins are
 	//504 +- 15 --> 489, 519 
@@ -111,54 +112,50 @@ int Speed_Tick(int Speed_State){
 	//489-15 -> 474 /4 --> 118.5 --> 489-371, 371-253, 253-135, 135 & below 
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
-	switch(Speed_State){
-		case stop:
-			if(joystick >= 800){
-				speed = 50;
+	switch(Speed_State{
+		case range:
+			if(joystick >= 885){
+				tilt = 1;
 			}
-			else if(joystick >= 519){
+			else if(joystick <= 135){
+				tilt = 1;
+			}
+			else if((joystick >= 763) && (joystick < 885)){
+				tilt = 2;
+			}
+			else if((joystick >= 641) && (joystick < 763)){
+				tilt = 3;
+			}
+			else if((joystick >= 519) && (joystick < 641)){
+				tilt = 4;
+			}
+			else if((joystick <= 253) && (joystick > 135)){
+				tilt = 2;
+			}
+			else if((joystick <= 371) && (joystick > 253)){
+				tilt = 3;
+			}
+			else if((joystick <= 489) && (joystick > 371)){
+				tilt = 4;
+			}
+			Speed_State = assign;
+			break;
+		case assign:
+			if(tilt == 1){
 				speed = 100;
 			}
-			else if(joystick <= 489){
-				speed = 50;
+			if(tilt == 2){
+				speed = 250;
 			}
-			Speed_State = stop;
-			break;
-		/*
-			if((joystick >= 885) || (joystick <= 135)){
-				Speed_State = range100;
+			if(tilt == 3){
+				speed = 500;
 			}
-			else if((joystick >= 763) || (joystick <= 253)){
-				Speed_State = range250;	
-			}
-			else if((joystick >= 641) || (joystick <= 371)){
-				Speed_State = range500;
-			}
-			else if((joystick >= 519) || (joystick <= 489)){
-				Speed_State = range1000;
-			}
-			else{
+			if(tilt == 4){
 				speed = 1000;
-				Speed_State = stop;
 			}
+			Speed_State = range;
 			break;
-		case range1000:
-			speed = 1000;
-			Speed_State = stop;
-			break;
-		case range500:
-			speed = 500;
-			Speed_State = stop;
-			break;
-		case range250:
-			speed = 250;
-			Speed_State = stop;
-			break;
-		case range100:
-			speed = 100;
-			Speed_State = stop;
-			break; */
-		default: Speed_State = stop; break;
+		default: Speed_State = range; break;
 	} 		
 	return Speed_State;
 }
