@@ -113,10 +113,10 @@ int Speed_Tick(int Speed_State){
 	
 	switch(Speed_State){
 		case assignspeed:
-			if((joystick - 519) < 100)){ 
+			if((joystick - 519) < 100){ 
 				speed = 1000;
 			}
-			if((519 - joystick) < 100)){//this is for going left just testing some stuff
+			if((519 - joystick) < 100){//this is for going left just testing some stuff
 				speed = 1000;
 			}
 			if((joystick - 519) == 100){//if its equal to or passes this point
