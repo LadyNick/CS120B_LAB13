@@ -16,9 +16,11 @@
 #include "scheduler.h"
 #endif
 
-unsigned short joystick;
-unsigned char pattern = 0x80;
-unsigned char row = 0xFE;
+unsigned char update = 0;
+unsigned short leftright;
+unsigned short updown;
+unsigned char pattern[5] = {0x00, 0x3C, 0x24, 0x3C, 0x00};
+unsigned char row[5] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF}; 
 unsigned long speed = 100;
 //for my hardware, at neutral the ADC is 504 = 0x1F8
 
@@ -66,38 +68,35 @@ void A2D_init() {
 	//	    analog to digital conversions.
 }
 
-enum Shift_States{wait, left, right}Shift_State;
+// Pins on PORTA are used as input for A2D conversion
+	//    The default channel is 0 (PA0)
+	// The value of pinNum determines the pin on PORTA
+	//    used for A2D conversion
+	// Valid values range between 0 and 7, where the value
+	//    represents the desired pin for A2D conversion
+void Set_A2D_Pin(unsigned char pinNum) {
+ADMUX = (pinNum <= 0x07) ? pinNum : ADMUX;
+// Allow channel to stabilize
+static unsigned char i = 0;
+for ( i=0; i<15; i++ ) { asm("nop"); } 
+}
+
+
+enum Shift_States{wait, shift}Shift_State;
 int Shift_Tick(int Shift_State){
 	switch(Shift_State){
 		case wait:
-			if(joystick == 0x1F8){
-				Shift_State = wait;
-			}
-			else if(joystick < (504 - 15)){
-				Shift_State = left;
-			}
-			else if(joystick > (504 + 15)){
-				Shift_State = right;
-			}
-			break;
-		case left:
-			if(pattern == 0x80){
-				pattern = 0x01;
+			if((leftright > 498) && (lefright < 519) && (updown > 498) && (updown < 519)){
+				Shift_State = wait; //there is no movement
 			}
 			else{
-				pattern = pattern << 1; 
+				Shift_State = shift;
 			}
-			Shift_State = wait;
 			break;
-		case right:
-			if(pattern == 0x01){
-				pattern = 0x80;
+		case shift:
+			if(leftright <= 498){//its going to the left
+				if(
 			}
-			else{
-				pattern = pattern >> 1;
-			}
-			Shift_State = wait;
-		       break;	
 		default: Shift_State = wait; break;
 	}
 	return Shift_State;
@@ -151,9 +150,14 @@ int Speed_Tick(int Speed_State){
 enum Display_States{matrix}Display_State;
 int Display_Tick(int LED_State){
 	switch(LED_State){
+			
 		case matrix:
-			transmit_data(row, 2);
-			transmit_data(pattern, 1);
+			transmit_data(pattern[update],1);
+			transmit_data(row[update], 2);
+			++update;
+			if(update > 4){
+				update = 0;
+			}
 			LED_State = matrix;
 			break;
 		default: LED_State = matrix;
@@ -197,7 +201,10 @@ int main(void) {
     unsigned short i;
     
     while (1) {
-	    joystick = ADC;
+	    Set_A2D_Pin(0);
+	    leftright = ADC;
+	    Set_A2D_Pin(1);
+	    updown = ADC;
 	    task1.period = speed;
 	    
 	    for(i=0; i<numTasks; i++){ //Scheduler code
