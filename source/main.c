@@ -154,7 +154,7 @@ int Speed_Tick(int Speed_State){
 	//489-15 -> 474 /4 --> 118.5 --> 489-371, 371-253, 253-135, 135 & below 
 	//1008-519 ->489/4 --> 122.25 --> 519-641, 641-763, 763-885, 885 & above
 	
-	switch(Speed_State){
+	/*switch(Speed_State){
 		case range: //519
 			if(joystick >= 519){
 				if(joystick >= 885){
@@ -185,8 +185,8 @@ int Speed_Tick(int Speed_State){
 				}
 			}
 			Speed_State = range; break;
-		default: Speed_State = range; break;
-	} 		
+		default: Speed_State = range; break; 
+	} 		*/
 	return Speed_State;
 }
 
@@ -195,11 +195,9 @@ int Display_Tick(int LED_State){
 	switch(LED_State){
 			
 		case matrix:
-			transmit_data(pattern[update],1);
-			transmit_data(row[update], 2);
-			++update;
-			if(update > 4){
-				update = 0;
+			for(update = 0; update < 5; ++i){
+				transmit_data(pattern[update],1);
+				transmit_data(row[update], 2);
 			}
 			LED_State = matrix;
 			break;
@@ -248,7 +246,7 @@ int main(void) {
 	    leftright = ADC;
 	    Set_A2D_Pin(1);
 	    updown = ADC;
-	    task1.period = speed;
+	    //task1.period = speed;
 	    
 	    for(i=0; i<numTasks; i++){ //Scheduler code
 			if(tasks[i]->elapsedTime >= tasks[i]->period){
