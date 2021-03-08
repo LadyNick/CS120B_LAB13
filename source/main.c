@@ -132,6 +132,7 @@ int Shift_Tick(int Shift_State){
 							currow = row[i+1];
 						}
 					}
+				}
 			}	
 		default: Shift_State = wait; break;
 	}
